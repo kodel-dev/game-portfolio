@@ -6,6 +6,26 @@
   <title>Kodel's Game Portfolio</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
+    :root {
+      --primary: #00ffc3;
+      --bg-dark: #181c24;
+      --bg-light: #f5f7fa;
+      --text-dark: #fff;
+      --text-light: #222;
+      --card-bg-dark: #23283a;
+      --card-bg-light: #fff;
+    }
+    [data-theme="dark"] {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    [data-theme="light"] {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+    html {
+      transition: background 0.5s, color 0.5s;
+    }
     #particles-js {
       position: fixed;
       width: 100%;
@@ -14,6 +34,94 @@
       top: 0;
       left: 0;
       background: transparent;
+    }
+    .container {
+      max-width: 420px;
+      margin: 7vh auto;
+      background: var(--card-bg-dark);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+      padding: 2.5rem 2rem 2rem 2rem;
+      text-align: center;
+      backdrop-filter: blur(2px);
+      transition: background 0.5s;
+    }
+    [data-theme="light"] .container {
+      background: var(--card-bg-light);
+      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 2.3rem;
+      letter-spacing: 2px;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(90deg, #00ffc3 40%, #00bfff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 8px #00ffc3, 0 0 2px #00bfff; }
+      to   { text-shadow: 0 0 24px #00ffc3, 0 0 8px #00bfff; }
+    }
+    #toggleMode {
+      background: var(--primary);
+      color: #181c24;
+      border: none;
+      border-radius: 24px;
+      padding: 0.7em 1.5em;
+      font-size: 1.1em;
+      margin-bottom: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,255,195,0.12);
+      transition: background 0.3s, transform 0.2s;
+    }
+    #toggleMode:hover {
+      background: #00bfff;
+      transform: scale(1.07);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 1.2em 0 1.5em 0;
+    }
+    ul li {
+      margin: 0.7em 0;
+    }
+    ul li a {
+      display: block;
+      padding: 0.7em 0;
+      border-radius: 12px;
+      background: rgba(0,255,195,0.07);
+      color: inherit;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+    }
+    ul li a:hover {
+      background: var(--primary);
+      color: #181c24;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 2px 12px rgba(0,255,195,0.15);
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #00bfff;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.2rem 0.5rem;
+        max-width: 98vw;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -37,7 +145,7 @@
   <div class="container">
     <h1>Kodel's Game Portfolio 🎮</h1>
     <button id="toggleMode">🌓 Toggle Theme</button>
-    <p>Select a game to play:</p>
+    <p style="margin-bottom:0.7em;">Select a game to play:</p>
     <ul>
       <li><a href="games/snake.html" target="_blank">🐍 Snake Game</a></li>
       <li><a href="games/flappy.html" target="_blank">🐤 Flappy Bird Clone</a></li>
