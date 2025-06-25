@@ -155,25 +155,6 @@
       transform: scale(1.03) rotate(-1deg);
       box-shadow: 0 0 24px #00ffc3cc;
     }
-    .avatar {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background-image: url('https://avatars.githubusercontent.com/u/134899650?v=4');
-      background-size: cover;
-      background-position: center;
-      border: 3px solid #00ffc3;
-      box-shadow: 0 0 18px #00ffc3, 0 0 0 6px #00ffc355;
-      cursor: grab;
-      left: 20px;
-      top: 20px;
-      z-index: 10;
-      transition: box-shadow 0.3s;
-    }
-    .avatar:active {
-      box-shadow: 0 0 32px #00ffc3, 0 0 0 12px #00ffc355;
-    }
     @media screen and (max-width: 600px) {
       .container {
         margin: 5vh 1rem;
@@ -191,12 +172,6 @@
         box-sizing: border-box;
         font-size: 0.95rem;
       }
-      .avatar {
-        width: 70px;
-        height: 70px;
-        left: 10px;
-        top: 10px;
-      }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -212,13 +187,11 @@
       <li><a href="games/flappy.html" target="_blank">🐤 Flappy Bird</a></li>
       <li><a href="games/tetris.html" target="_blank">🧱 Tetris Mini</a></li>
       <li><a href="games/pong.html" target="_blank">🏓 Pong</a></li>
-      <li><a href="https://www.cgtrader.com/products/tank-top-zepeto-item-3d-model-unity-prefab" target="_blank">🧍‍♂️ ZEPETO Unity Asset</a></li>
     </ul>
 
-    <div style="margin-top: 1rem">
-      <a href="https://www.cgtrader.com/products/tank-top-zepeto-item-3d-model-unity-prefab" target="_blank">
-        <img src="https://placehold.co/600x300?text=ZEPETO+Item+Preview" alt="ZEPETO Item Preview" style="width:100%; border-radius:10px; box-shadow: 0 0 10px #00ffc3;">
-      </a>
+    <div class="gallery">
+      <h2>🧍‍♂️ ZEPETO Asset Preview</h2>
+      <img src="https://images.cgtrader.com/items/4451541/790d4f4a6e/large/tank-top-zepeto-item-3d-model-unity-prefab-3d-model-low-poly-max-obj-fbx-blend.jpg" alt="ZEPETO Unity Asset">
     </div>
 
     <div class="gallery">
@@ -233,19 +206,15 @@
     <footer>Made with 💙 by Kodel • Game Portfolio</footer>
   </div>
 
-  <div class="avatar" id="zepetoAvatar" title="Drag me!"></div>
-
   <audio id="bgmusic" loop>
     <source src="https://www.bensound.com/bensound-music/bensound-dubstep.mp3" type="audio/mpeg" />
   </audio>
 
   <script>
-    // Loading screen
     window.addEventListener("load", () => {
       document.getElementById("loading").style.display = "none";
     });
 
-    // Theme toggle
     document.getElementById("toggleMode").onclick = () => {
       const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
@@ -253,7 +222,6 @@
     };
     document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark");
 
-    // Music toggle
     const audio = document.getElementById("bgmusic");
     const muteBtn = document.getElementById("muteBtn");
     muteBtn.onclick = () => {
@@ -266,12 +234,10 @@
         muteBtn.textContent = "🔇 Unmute";
       }
     };
-    // Set initial button state
     audio.onplay = () => { muteBtn.textContent = "🔊 Toggle Music"; };
     audio.onpause = () => { muteBtn.textContent = "🔇 Unmute"; };
     muteBtn.textContent = audio.muted ? "🔇 Unmute" : "🔊 Toggle Music";
 
-    // Particles.js
     particlesJS("particles-js", {
       particles: {
         number: { value: 80 },
@@ -288,7 +254,6 @@
       }
     });
 
-    // Typing animation
     const typingText = "Creative Developer | Game Builder | ZEPETO World Creator";
     const typingDiv = document.getElementById("typing");
     let idx = 0;
@@ -296,48 +261,6 @@
       typingDiv.textContent = typingText.slice(0, idx++) + '_';
       if (idx > typingText.length) idx = 0;
     }, 120);
-
-    // Drag ZEPETO Avatar
-    const avatar = document.getElementById("zepetoAvatar");
-    let isDragging = false;
-    let offsetX = 0, offsetY = 0;
-
-    avatar.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      offsetX = e.clientX - avatar.offsetLeft;
-      offsetY = e.clientY - avatar.offsetTop;
-      avatar.style.cursor = "grabbing";
-    });
-
-    window.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        avatar.style.left = `${e.clientX - offsetX}px`;
-        avatar.style.top = `${e.clientY - offsetY}px`;
-      }
-    });
-
-    window.addEventListener("mouseup", () => {
-      isDragging = false;
-      avatar.style.cursor = "grab";
-    });
-
-    // Touch support for mobile
-    avatar.addEventListener("touchstart", (e) => {
-      isDragging = true;
-      const touch = e.touches[0];
-      offsetX = touch.clientX - avatar.offsetLeft;
-      offsetY = touch.clientY - avatar.offsetTop;
-    });
-    window.addEventListener("touchmove", (e) => {
-      if (isDragging) {
-        const touch = e.touches[0];
-        avatar.style.left = `${touch.clientX - offsetX}px`;
-        avatar.style.top = `${touch.clientY - offsetY}px`;
-      }
-    });
-    window.addEventListener("touchend", () => {
-      isDragging = false;
-    });
   </script>
 </body>
 </html>
