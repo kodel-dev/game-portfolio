@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kodel's Cyber Game Lab</title>
+  <link rel="stylesheet" href="css/style.css">
   <style>
     body {
       margin: 0;
@@ -53,23 +54,36 @@
       margin: 10vh auto;
       text-align: center;
       padding: 2rem;
-      border-radius: 12px;
+      border-radius: 18px;
       border: 2px solid #00ffc3;
-      box-shadow: 0 0 20px #00ffc3;
-      background: rgba(0,0,0,0.5);
+      box-shadow: 0 0 32px #00ffc3;
+      background: rgba(0,0,0,0.55);
+      position: relative;
+      animation: fadeInUp 1s cubic-bezier(.23,1.01,.32,1) both;
+      backdrop-filter: blur(4px);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: none;}
     }
     h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       animation: neonPulse 2s infinite alternate;
+      letter-spacing: 2px;
+      margin-bottom: 0.2em;
+      text-shadow: 0 0 24px #00ffc3, 0 0 8px #00bfff, 0 2px 8px #0008;
     }
     @keyframes neonPulse {
       from { text-shadow: 0 0 5px #00ffc3; }
       to { text-shadow: 0 0 20px #00ffc3; }
     }
     #typing {
-      font-size: 1rem;
+      font-size: 1.1rem;
       margin-top: -10px;
       color: #aaa;
+      min-height: 1.2em;
+      letter-spacing: 1px;
+      margin-bottom: 1.2em;
     }
     ul {
       list-style: none;
@@ -85,30 +99,47 @@
       color: #00ffc3;
       text-decoration: none;
       border: 2px solid #00ffc3;
-      border-radius: 8px;
+      border-radius: 10px;
+      background: rgba(0,255,195,0.07);
+      font-weight: 500;
+      font-size: 1.1em;
       transition: 0.3s;
+      box-shadow: 0 2px 12px 0 #00ffc31a;
+      position: relative;
+      overflow: hidden;
     }
     ul li a:hover {
       background-color: #00ffc333;
-      transform: scale(1.05);
+      color: #181c24;
+      transform: scale(1.07);
+      border-color: #00bfff;
+      box-shadow: 0 4px 24px #00ffc3cc;
     }
     button {
       margin-top: 1rem;
-      background: none;
-      border: 2px solid #00ffc3;
-      color: #00ffc3;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
+      background: linear-gradient(90deg, #00ffc3 60%, #00bfff 100%);
+      border: none;
+      color: #181c24;
+      padding: 0.6rem 1.3rem;
+      border-radius: 24px;
       cursor: pointer;
+      font-size: 1.1em;
+      font-weight: bold;
+      box-shadow: 0 2px 16px #00ffc355;
+      margin-right: 0.7em;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
     button:hover {
-      background: #00ffc3;
-      color: black;
+      background: linear-gradient(90deg, #00bfff 40%, #00ffc3 100%);
+      color: #000;
+      transform: scale(1.09) rotate(-2deg);
+      box-shadow: 0 4px 24px #00ffc3cc;
     }
     footer {
       margin-top: 2rem;
-      font-size: 0.9rem;
-      opacity: 0.6;
+      font-size: 0.95rem;
+      opacity: 0.7;
+      letter-spacing: 1px;
     }
     .gallery {
       margin-top: 2rem;
@@ -118,18 +149,30 @@
       border-radius: 10px;
       margin-bottom: 1rem;
       box-shadow: 0 0 10px #00ffc3;
+      transition: transform 0.2s;
+    }
+    .gallery img:hover {
+      transform: scale(1.03) rotate(-1deg);
+      box-shadow: 0 0 24px #00ffc3cc;
     }
     .avatar {
       position: absolute;
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      background-image: url('https://placehold.co/100x100?text=ZEPETO');
+      background-image: url('https://avatars.githubusercontent.com/u/134899650?v=4');
       background-size: cover;
       background-position: center;
-      border: 2px solid #00ffc3;
-      box-shadow: 0 0 10px #00ffc3;
+      border: 3px solid #00ffc3;
+      box-shadow: 0 0 18px #00ffc3, 0 0 0 6px #00ffc355;
       cursor: grab;
+      left: 20px;
+      top: 20px;
+      z-index: 10;
+      transition: box-shadow 0.3s;
+    }
+    .avatar:active {
+      box-shadow: 0 0 32px #00ffc3, 0 0 0 12px #00ffc355;
     }
     @media screen and (max-width: 600px) {
       .container {
@@ -146,7 +189,13 @@
       ul li a {
         width: 100%;
         box-sizing: border-box;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+      }
+      .avatar {
+        width: 70px;
+        height: 70px;
+        left: 10px;
+        top: 10px;
       }
     }
   </style>
@@ -184,37 +233,45 @@
     <footer>Made with 💙 by Kodel • Game Portfolio</footer>
   </div>
 
-  <div class="avatar" id="zepetoAvatar"></div>
+  <div class="avatar" id="zepetoAvatar" title="Drag me!"></div>
 
   <audio id="bgmusic" loop>
     <source src="https://www.bensound.com/bensound-music/bensound-dubstep.mp3" type="audio/mpeg" />
   </audio>
 
   <script>
+    // Loading screen
     window.addEventListener("load", () => {
       document.getElementById("loading").style.display = "none";
     });
 
-    const audio = document.getElementById("bgmusic");
-
+    // Theme toggle
     document.getElementById("toggleMode").onclick = () => {
       const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       localStorage.setItem("theme", next);
     };
-
-    document.getElementById("muteBtn").onclick = () => {
-      if (audio.paused) {
-        audio.play();
-        audio.muted = false;
-      } else {
-        audio.muted = !audio.muted;
-      }
-      document.getElementById("muteBtn").textContent = audio.muted ? "🔇 Unmute" : "🔊 Toggle Music";
-    };
-
     document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark");
 
+    // Music toggle
+    const audio = document.getElementById("bgmusic");
+    const muteBtn = document.getElementById("muteBtn");
+    muteBtn.onclick = () => {
+      if (audio.paused || audio.muted) {
+        audio.muted = false;
+        audio.play();
+        muteBtn.textContent = "🔊 Toggle Music";
+      } else {
+        audio.muted = true;
+        muteBtn.textContent = "🔇 Unmute";
+      }
+    };
+    // Set initial button state
+    audio.onplay = () => { muteBtn.textContent = "🔊 Toggle Music"; };
+    audio.onpause = () => { muteBtn.textContent = "🔇 Unmute"; };
+    muteBtn.textContent = audio.muted ? "🔇 Unmute" : "🔊 Toggle Music";
+
+    // Particles.js
     particlesJS("particles-js", {
       particles: {
         number: { value: 80 },
@@ -231,6 +288,7 @@
       }
     });
 
+    // Typing animation
     const typingText = "Creative Developer | Game Builder | ZEPETO World Creator";
     const typingDiv = document.getElementById("typing");
     let idx = 0;
@@ -241,22 +299,43 @@
 
     // Drag ZEPETO Avatar
     const avatar = document.getElementById("zepetoAvatar");
-    avatar.style.left = "20px";
-    avatar.style.top = "20px";
     let isDragging = false;
+    let offsetX = 0, offsetY = 0;
 
     avatar.addEventListener("mousedown", (e) => {
       isDragging = true;
+      offsetX = e.clientX - avatar.offsetLeft;
+      offsetY = e.clientY - avatar.offsetTop;
+      avatar.style.cursor = "grabbing";
     });
 
     window.addEventListener("mousemove", (e) => {
       if (isDragging) {
-        avatar.style.left = `${e.pageX - 50}px`;
-        avatar.style.top = `${e.pageY - 50}px`;
+        avatar.style.left = `${e.clientX - offsetX}px`;
+        avatar.style.top = `${e.clientY - offsetY}px`;
       }
     });
 
     window.addEventListener("mouseup", () => {
+      isDragging = false;
+      avatar.style.cursor = "grab";
+    });
+
+    // Touch support for mobile
+    avatar.addEventListener("touchstart", (e) => {
+      isDragging = true;
+      const touch = e.touches[0];
+      offsetX = touch.clientX - avatar.offsetLeft;
+      offsetY = touch.clientY - avatar.offsetTop;
+    });
+    window.addEventListener("touchmove", (e) => {
+      if (isDragging) {
+        const touch = e.touches[0];
+        avatar.style.left = `${touch.clientX - offsetX}px`;
+        avatar.style.top = `${touch.clientY - offsetY}px`;
+      }
+    });
+    window.addEventListener("touchend", () => {
       isDragging = false;
     });
   </script>
