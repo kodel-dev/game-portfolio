@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flappy Bird Clone</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+    canvas {
+      background: #222;
+      box-shadow: 0 0 15px #00ffc3;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="flappy" width="400" height="500"></canvas>
+  <script>
+    const canvas = document.getElementById("flappy");
+    const ctx = canvas.getContext("2d");
+
+    let frames = 0;
+    const gravity = 0.25;
+    const gap = 100;
+
+    const bird = {
+      x: 50,
+      y: 150,
+      w: 20,
+      h: 20,
+      velocity: 0,
+      jump: 4.6,
+      draw() {
+        ctx.fillStyle = "#00ffc3";
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+      },
+      flap() {
+        this.velocity = -this.jump;
+      },
+      update() {
+        this.velocity += gravity;
+        this.y += this.velocity;
+      },
+      reset() {
+        this.y = 150;
+        this.velocity = 0;
+        pipes.length = 0;
+      },
+    };
+
+    const pipes = [];
+    const pipeWidth = 40;
+    const pipeInterval = 90;
+
+    function drawPipes() {
+      ctx.fillStyle = "#ff007c";
+      for (let pipe of pipes) {
+        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+        ctx.fillRect(pipe.x, pipe.top + gap, pipeWidth, canvas.height);
+      }
+    }
+
+    function updatePipes() {
+      if (frames % pipeInterval === 0) {
+        let top = Math.floor(Math.random() * 200) + 20;
+        pipes.push({ x: canvas.width, top });
+      }
+      for (let i = 0; i < pipes.length; i++) {
+        pipes[i].x -= 2;
+        if (pipes[i].x + pipeWidth < 0) pipes.splice(i, 1);
+      }
+    }
+
+    function checkCollision() {
+      for (let pipe of pipes) {
+        if (
+          bird.x < pipe.x + pipeWidth &&
+          bird.x + bird.w > pipe.x &&
+          (bird.y < pipe.top || bird.y + bird.h > pipe.top + gap)
+        ) {
+          bird.reset();
+        }
+      }
+      if (bird.y + bird.h >= canvas.height) bird.reset();
+    }
+
+    function loop() {
+      frames++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bird.update();
+      bird.draw();
+      updatePipes();
+      drawPipes();
+      checkCollision();
+      requestAnimationFrame(loop);
+    }
+
+    document.addEventListener("keydown", () => bird.flap());
+    loop();
+  </script>
+</body>
+</html>

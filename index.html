@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kodel's Game Portfolio</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      background: transparent;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    // Theme toggle
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("toggleMode");
+      toggle.onclick = () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      };
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    });
+  </script>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="container">
+    <h1>Kodel's Game Portfolio 🎮</h1>
+    <button id="toggleMode">🌓 Toggle Theme</button>
+    <p>Select a game to play:</p>
+    <ul>
+      <li><a href="games/snake.html" target="_blank">🐍 Snake Game</a></li>
+      <li><a href="games/flappy.html" target="_blank">🐤 Flappy Bird Clone</a></li>
+      <li><a href="games/tetris.html" target="_blank">🧱 Tetris Mini</a></li>
+    </ul>
+    <p><a href="https://kodel-dev.github.io">← Back to Home</a></p>
+  </div>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 60 },
+        color: { value: "#00ffc3" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        line_linked: { enable: true, color: "#00ffc3" },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" } },
+        modes: { repulse: { distance: 100 } }
+      }
+    });
+  </script>
+</body>
+</html>
