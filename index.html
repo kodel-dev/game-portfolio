@@ -37,6 +37,7 @@
       border-radius: 12px;
       border: 2px solid #00ffc3;
       box-shadow: 0 0 20px #00ffc3;
+      background: rgba(0,0,0,0.5);
     }
     h1 {
       font-size: 2rem;
@@ -90,6 +91,15 @@
       font-size: 0.9rem;
       opacity: 0.6;
     }
+    .gallery {
+      margin-top: 2rem;
+    }
+    .gallery img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px #00ffc3;
+    }
     @media screen and (max-width: 600px) {
       .container {
         margin: 5vh 1rem;
@@ -130,6 +140,14 @@
         width="100%" height="400">
       </iframe>
     </div>
+
+    <div class="gallery">
+      <h2>🎨 Project Gallery</h2>
+      <img src="https://placehold.co/600x300?text=POS+Dashboard" alt="POS Project">
+      <img src="https://placehold.co/600x300?text=ZEPETO+World" alt="ZEPETO World">
+      <img src="https://placehold.co/600x300?text=Mini+Game" alt="Mini Game">
+    </div>
+
     <button id="toggleMode">🌓 Toggle Theme</button>
     <button id="muteBtn">🔊 Toggle Music</button>
     <footer>Made with 💙 by Kodel • Game Portfolio</footer>
