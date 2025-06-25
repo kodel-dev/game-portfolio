@@ -1,40 +1,179 @@
-<!-- ...[semua isi sebelumnya tetap]... -->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kodel's Cyber Game Lab</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #050505, #0a0a0a);
+      color: #00ffc3;
+      overflow-x: hidden;
+    }
+    #particles-js {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #00ffc3;
+      font-size: 1.5rem;
+      z-index: 9999;
+    }
+    .container {
+      max-width: 800px;
+      margin: 10vh auto;
+      text-align: center;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 2px solid #00ffc3;
+      box-shadow: 0 0 20px #00ffc3;
+    }
+    h1 {
+      font-size: 2rem;
+      animation: neonPulse 2s infinite alternate;
+    }
+    @keyframes neonPulse {
+      from { text-shadow: 0 0 5px #00ffc3; }
+      to { text-shadow: 0 0 20px #00ffc3; }
+    }
+    #typing {
+      font-size: 1rem;
+      margin-top: -10px;
+      color: #aaa;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    ul li a {
+      display: inline-block;
+      padding: 0.8rem 1.4rem;
+      color: #00ffc3;
+      text-decoration: none;
+      border: 2px solid #00ffc3;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    ul li a:hover {
+      background-color: #00ffc333;
+      transform: scale(1.05);
+    }
+    button {
+      margin-top: 1rem;
+      background: none;
+      border: 2px solid #00ffc3;
+      color: #00ffc3;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00ffc3;
+      color: black;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
+    @media screen and (max-width: 600px) {
+      .container {
+        margin: 5vh 1rem;
+        padding: 1.2rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      ul {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      ul li a {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+</head>
+<body>
+  <div id="loading">🚀 Loading Kodel's Game Lab...</div>
+  <div id="particles-js"></div>
+  <div class="container">
+    <h1>Kodel's Cyber Game Lab</h1>
+    <div id="typing"></div>
     <ul>
       <li><a href="games/snake.html" target="_blank">🐍 Snake Game</a></li>
       <li><a href="games/flappy.html" target="_blank">🐤 Flappy Bird</a></li>
       <li><a href="games/tetris.html" target="_blank">🧱 Tetris Mini</a></li>
       <li><a href="games/pong.html" target="_blank">🏓 Pong</a></li>
-      <li><a href="https://sketchfab.com/3d-models/kodel-avatar-sample-abc123" target="_blank">🧍‍♂️ ZEPETO / Sketchfab Profile</a></li>
+      <li><a href="https://sketchfab.com/3d-models/kodel-avatar-sample-fa8f95a65e1a4d918340c229b07b222c" target="_blank">🧍‍♂️ ZEPETO / Sketchfab Profile</a></li>
     </ul>
-
-<!-- Responsive styling update -->
-<style>
-@media screen and (max-width: 600px) {
-  .container {
-    margin: 5vh 1rem;
-    padding: 1.2rem;
-  }
-  h1 {
-    font-size: 1.5rem;
-  }
-  ul {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-  ul li a {
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 0.9rem;
-  }
-  .logo {
-    width: 48px;
-    height: 48px;
-  }
-}
-</style>
-<!-- Tambahkan iframe viewer opsional di bawah -->
-<div style="margin-top: 1rem">
- <iframe title="3D ZEPETO-style Demo" frameborder="0" allowfullscreen
-  src="https://sketchfab.com/models/fa8f95a65e1a4d918340c229b07b222c/embed?autospin=0.2&ui_hint=2">
-</iframe>
-</div>
+    <div style="margin-top: 1rem">
+      <iframe title="3D ZEPETO-style Demo" frameborder="0" allowfullscreen
+        src="https://sketchfab.com/models/fa8f95a65e1a4d918340c229b07b222c/embed?autospin=0.2&ui_hint=2"
+        width="100%" height="400">
+      </iframe>
+    </div>
+    <button id="toggleMode">🌓 Toggle Theme</button>
+    <button id="muteBtn">🔊 Toggle Music</button>
+    <footer>Made with 💙 by Kodel • Game Portfolio</footer>
+  </div>
+  <audio id="bgmusic" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-dubstep.mp3" type="audio/mpeg" />
+  </audio>
+  <script>
+    window.addEventListener("load", () => {
+      document.getElementById("loading").style.display = "none";
+    });
+    document.getElementById("toggleMode").onclick = () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    };
+    document.getElementById("muteBtn").onclick = () => {
+      const audio = document.getElementById("bgmusic");
+      audio.muted = !audio.muted;
+      document.getElementById("muteBtn").textContent = audio.muted ? "🔇 Unmute" : "🔊 Toggle Music";
+    };
+    document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark");
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#00ffc3" },
+        shape: { type: "circle" },
+        opacity: { value: 0.2 },
+        size: { value: 3 },
+        line_linked: { enable: true, color: "#00ffc3" },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" } },
+        modes: { repulse: { distance: 100 } }
+      }
+    });
+    const typingText = "Creative Developer | Game Builder | ZEPETO World Creator";
+    const typingDiv = document.getElementById("typing");
+    let idx = 0;
+    setInterval(() => {
+      typingDiv.textContent = typingText.slice(0, idx++) + '_';
+      if (idx > typingText.length) idx = 0;
+    }, 120);
+  </script>
+</body>
+</html>
