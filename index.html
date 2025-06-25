@@ -12,6 +12,25 @@
       color: #00ffc3;
       overflow-x: hidden;
     }
+    html[data-theme='light'] body {
+      background: linear-gradient(135deg, #ffffff, #e0e0e0);
+      color: #111;
+    }
+    html[data-theme='light'] .container {
+      background: rgba(255,255,255,0.9);
+      color: #111;
+      border-color: #111;
+    }
+    html[data-theme='light'] ul li a {
+      color: #111;
+      border-color: #111;
+    }
+    html[data-theme='light'] ul li a:hover {
+      background-color: #11111111;
+    }
+    html[data-theme='light'] footer {
+      color: #111;
+    }
     #particles-js {
       position: fixed;
       top: 0; left: 0;
@@ -134,9 +153,10 @@
       <li><a href="games/pong.html" target="_blank">🏓 Pong</a></li>
       <li><a href="https://www.cgtrader.com/products/tank-top-zepeto-item-3d-model-unity-prefab" target="_blank">🧍‍♂️ ZEPETO Unity Asset</a></li>
     </ul>
+
     <div style="margin-top: 1rem">
       <a href="https://www.cgtrader.com/products/tank-top-zepeto-item-3d-model-unity-prefab" target="_blank">
-        <img src="https://images.cgtrader.com/items/5278651/2d0a4e3c1e/large/tank-top-zepeto-item-3d-model-unity-prefab-3d-model-low-poly-max-obj-fbx.jpg" alt="Tank Top ZEPETO Preview" style="width:100%; border-radius:10px; box-shadow: 0 0 10px #00ffc3;">
+        <img src="https://placehold.co/600x300?text=ZEPETO+Item+Preview" alt="ZEPETO Item Preview" style="width:100%; border-radius:10px; box-shadow: 0 0 10px #00ffc3;">
       </a>
     </div>
 
@@ -151,24 +171,36 @@
     <button id="muteBtn">🔊 Toggle Music</button>
     <footer>Made with 💙 by Kodel • Game Portfolio</footer>
   </div>
-  <audio id="bgmusic" autoplay loop>
+
+  <audio id="bgmusic" loop>
     <source src="https://www.bensound.com/bensound-music/bensound-dubstep.mp3" type="audio/mpeg" />
   </audio>
+
   <script>
     window.addEventListener("load", () => {
       document.getElementById("loading").style.display = "none";
     });
+
+    const audio = document.getElementById("bgmusic");
+
     document.getElementById("toggleMode").onclick = () => {
       const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       localStorage.setItem("theme", next);
     };
+
     document.getElementById("muteBtn").onclick = () => {
-      const audio = document.getElementById("bgmusic");
-      audio.muted = !audio.muted;
+      if (audio.paused) {
+        audio.play();
+        audio.muted = false;
+      } else {
+        audio.muted = !audio.muted;
+      }
       document.getElementById("muteBtn").textContent = audio.muted ? "🔇 Unmute" : "🔊 Toggle Music";
     };
+
     document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark");
+
     particlesJS("particles-js", {
       particles: {
         number: { value: 80 },
@@ -184,6 +216,7 @@
         modes: { repulse: { distance: 100 } }
       }
     });
+
     const typingText = "Creative Developer | Game Builder | ZEPETO World Creator";
     const typingDiv = document.getElementById("typing");
     let idx = 0;
