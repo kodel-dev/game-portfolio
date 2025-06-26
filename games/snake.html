@@ -151,7 +151,7 @@
     }
     @media (max-width: 600px) {
       #score { font-size: 1em; }
-      #game { max-height: 60vw; }
+      #game { max-height: 60vh; }
       #restart, #to-index { font-size: 0.95em; }
       #leaderboard { font-size: 0.95em; }
     }
@@ -293,6 +293,17 @@
     <h3>🏆 Leaderboard</h3>
     <ol id="lb-list"></ol>
     <div id="lb-timer"></div>
+  </div>
+  <!-- Tambahkan di bawah canvas -->
+  <div id="mobile-controls-fixed" style="display:none;">
+    <div class="mobile-controls">
+      <button id="btn-up-fixed">▲</button>
+      <div>
+        <button id="btn-left-fixed">◀</button>
+        <button id="btn-down-fixed">▼</button>
+        <button id="btn-right-fixed">▶</button>
+      </div>
+    </div>
   </div>
   <script>
     // Responsive canvas
@@ -612,14 +623,21 @@
     }
     if (isMobile()) {
       document.getElementById("mobile-warning").style.display = "flex";
-      // Kontrol tombol
+      // Kontrol overlay
       document.getElementById("btn-up").onclick = () => { if (dy !== 1) { dx = 0; dy = -1; } };
       document.getElementById("btn-down").onclick = () => { if (dy !== -1) { dx = 0; dy = 1; } };
       document.getElementById("btn-left").onclick = () => { if (dx !== 1) { dx = -1; dy = 0; } };
       document.getElementById("btn-right").onclick = () => { if (dx !== -1) { dx = 1; dy = 0; } };
       document.getElementById("close-mobile-warning").onclick = () => {
         document.getElementById("mobile-warning").style.display = "none";
+        document.getElementById("mobile-controls-fixed").style.display = "block";
       };
+      // Kontrol tombol fixed di bawah canvas
+      document.getElementById("mobile-controls-fixed").style.display = "block";
+      document.getElementById("btn-up-fixed").onclick = () => { if (dy !== 1) { dx = 0; dy = -1; } };
+      document.getElementById("btn-down-fixed").onclick = () => { if (dy !== -1) { dx = 0; dy = 1; } };
+      document.getElementById("btn-left-fixed").onclick = () => { if (dx !== 1) { dx = -1; dy = 0; } };
+      document.getElementById("btn-right-fixed").onclick = () => { if (dx !== -1) { dx = 1; dy = 0; } };
     }
   </script>
 </body>
