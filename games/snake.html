@@ -5,82 +5,159 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Snake Game</title>
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
     body {
-      background-color: black;
+      background: #111;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
       color: #00ffc3;
       font-family: monospace;
+      overflow: hidden;
     }
-    canvas {
-      background-color: #111;
+    #score {
+      color: #00ffc3;
+      font-size: 1.5rem;
+      font-family: monospace;
+      margin: 1.2rem 0 0.5rem 0;
+      user-select: none;
+      text-shadow: 0 0 8px #00ffc3;
+      z-index: 10;
+    }
+    #game {
+      background-color: #181c24;
       box-shadow: 0 0 15px #00ffc3;
+      border: 2px solid #00ffc3;
+      display: block;
+      max-width: 98vw;
+      max-height: 70vw;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1/1;
+      touch-action: none;
+    }
+    @media (max-width: 600px) {
+      #score { font-size: 1.1rem; }
+      #game { max-height: 60vw; }
     }
   </style>
 </head>
 <body>
-  <canvas id="game" width="400" height="400"></canvas>
+  <div id="score">Score: 0</div>
+  <canvas id="game"></canvas>
   <script>
+    // Responsive canvas
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
-    const grid = 20;
-    let count = 0;
-    let snake = [{ x: 160, y: 160 }];
-    let dx = grid;
-    let dy = 0;
-    let food = { x: 320, y: 320 };
+    const scoreDiv = document.getElementById("score");
 
-    function getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min)) + min;
+    let grid = 20;
+    let tileCount = 20;
+    let snake, dx, dy, food, count, score;
+
+    function resizeCanvas() {
+      // Maintain 1:1 aspect ratio, fit to screen
+      let size = Math.min(window.innerWidth * 0.98, window.innerHeight * 0.7);
+      canvas.width = size;
+      canvas.height = size;
+      grid = Math.floor(size / tileCount);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function resetGame() {
+      snake = [{ x: 8, y: 8 }];
+      dx = 1; dy = 0;
+      food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+      count = 0;
+      score = 0;
+      updateScore();
+    }
+
+    function updateScore() {
+      scoreDiv.textContent = `Score: ${score}`;
     }
 
     function loop() {
       requestAnimationFrame(loop);
-      if (++count < 4) return;
+      if (++count < 6) return;
       count = 0;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Move snake
       const head = { x: snake[0].x + dx, y: snake[0].y + dy };
       snake.unshift(head);
 
+      // Eat food
       if (head.x === food.x && head.y === food.y) {
-        food.x = getRandomInt(0, 20) * grid;
-        food.y = getRandomInt(0, 20) * grid;
+        score++;
+        updateScore();
+        food.x = Math.floor(Math.random() * tileCount);
+        food.y = Math.floor(Math.random() * tileCount);
       } else {
         snake.pop();
       }
 
+      // Draw snake
       ctx.fillStyle = "#00ffc3";
-      snake.forEach(p => ctx.fillRect(p.x, p.y, grid - 1, grid - 1));
+      snake.forEach(p => ctx.fillRect(p.x * grid, p.y * grid, grid - 2, grid - 2));
 
+      // Draw food
       ctx.fillStyle = "#ff007c";
-      ctx.fillRect(food.x, food.y, grid - 1, grid - 1);
+      ctx.fillRect(food.x * grid, food.y * grid, grid - 2, grid - 2);
 
+      // Collision
       if (
-        head.x < 0 || head.x >= canvas.width ||
-        head.y < 0 || head.y >= canvas.height ||
+        head.x < 0 || head.x >= tileCount ||
+        head.y < 0 || head.y >= tileCount ||
         snake.slice(1).some(p => p.x === head.x && p.y === head.y)
       ) {
-        snake = [{ x: 160, y: 160 }];
-        dx = grid;
-        dy = 0;
+        resetGame();
       }
     }
 
+    // Keyboard controls
     document.addEventListener("keydown", e => {
-      if (e.key === "ArrowLeft" && dx === 0) {
-        dx = -grid; dy = 0;
-      } else if (e.key === "ArrowUp" && dy === 0) {
-        dy = -grid; dx = 0;
-      } else if (e.key === "ArrowRight" && dx === 0) {
-        dx = grid; dy = 0;
-      } else if (e.key === "ArrowDown" && dy === 0) {
-        dy = grid; dx = 0;
+      if ((e.key === "ArrowLeft" || e.key === "a" || e.key === "A") && dx !== 1) {
+        dx = -1; dy = 0;
+      } else if ((e.key === "ArrowUp" || e.key === "w" || e.key === "W") && dy !== 1) {
+        dy = -1; dx = 0;
+      } else if ((e.key === "ArrowRight" || e.key === "d" || e.key === "D") && dx !== -1) {
+        dx = 1; dy = 0;
+      } else if ((e.key === "ArrowDown" || e.key === "s" || e.key === "S") && dy !== -1) {
+        dy = 1; dx = 0;
       }
     });
+
+    // Touch controls for mobile
+    let touchStartX = null, touchStartY = null;
+    canvas.addEventListener("touchstart", function(e) {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+
+    canvas.addEventListener("touchend", function(e) {
+      if (touchStartX === null || touchStartY === null) return;
+      const dxTouch = e.changedTouches[0].clientX - touchStartX;
+      const dyTouch = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dxTouch) > Math.abs(dyTouch)) {
+        if (dxTouch > 30 && dx !== -1) { dx = 1; dy = 0; }
+        else if (dxTouch < -30 && dx !== 1) { dx = -1; dy = 0; }
+      } else {
+        if (dyTouch > 30 && dy !== -1) { dy = 1; dx = 0; }
+        else if (dyTouch < -30 && dy !== 1) { dy = -1; dx = 0; }
+      }
+      touchStartX = null;
+      touchStartY = null;
+    }, { passive: false });
 
     requestAnimationFrame(loop);
   </script>

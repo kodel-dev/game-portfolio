@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pong Game</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #score {
+      color: #00ffc3;
+      font-size: 2rem;
+      font-family: monospace;
+      z-index: 10;
+      text-shadow: 0 0 8px #00ffc3;
+      margin: 1.2rem 0 0.5rem 0;
+      user-select: none;
+    }
+    #pong {
+      background: #181c24;
+      box-shadow: 0 0 15px #00ffc3;
+      border: 2px solid #00ffc3;
+      display: block;
+      max-width: 98vw;
+      max-height: 70vh;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3/2;
+      touch-action: none;
+    }
+    @media (max-width: 600px) {
+      #score { font-size: 1.3rem; }
+      #pong { max-height: 55vh; }
+    }
+  </style>
+</head>
+<body>
+  <div id="score">0 : 0</div>
+  <canvas id="pong"></canvas>
+  <script>
+    // Responsive canvas
+    const canvas = document.getElementById("pong");
+    const ctx = canvas.getContext("2d");
+    const scoreDiv = document.getElementById("score");
+
+    // Set initial size
+    function resizeCanvas() {
+      // Maintain 3:2 aspect ratio
+      let w = Math.min(window.innerWidth * 0.98, 600);
+      let h = w * 2 / 3;
+      if (window.innerHeight * 0.7 < h) {
+        h = window.innerHeight * 0.7;
+        w = h * 3 / 2;
+      }
+      canvas.width = w;
+      canvas.height = h;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Game objects
+    let paddleWidth = 10, paddleHeight = 60, ballSize = 10;
+    let leftY, rightY, leftScore = 0, rightScore = 0, ball;
+
+    function resetVars() {
+      paddleWidth = Math.max(8, canvas.width * 0.025);
+      paddleHeight = Math.max(40, canvas.height * 0.18);
+      ballSize = Math.max(8, canvas.width * 0.025);
+      leftY = canvas.height / 2 - paddleHeight / 2;
+      rightY = canvas.height / 2 - paddleHeight / 2;
+      ball = {
+        x: canvas.width / 2 - ballSize / 2,
+        y: canvas.height / 2 - ballSize / 2,
+        dx: Math.random() > 0.5 ? canvas.width * 0.012 : -canvas.width * 0.012,
+        dy: (Math.random() - 0.5) * canvas.height * 0.025,
+        size: ballSize
+      };
+    }
+    resetVars();
+    window.addEventListener("resize", resetVars);
+
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+    }
+
+    function drawBall() {
+      ctx.fillStyle = "#ff007c";
+      ctx.fillRect(ball.x, ball.y, ball.size, ball.size);
+    }
+
+    function drawNet() {
+      ctx.fillStyle = "#00ffc3";
+      for (let i = 0; i < canvas.height; i += 20) {
+        ctx.fillRect(canvas.width / 2 - 1, i, 2, 10);
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawNet();
+      drawRect(0, leftY, paddleWidth, paddleHeight, "#00ffc3");
+      drawRect(canvas.width - paddleWidth, rightY, paddleWidth, paddleHeight, "#00ffc3");
+      drawBall();
+    }
+
+    function resetBall() {
+      ball.x = canvas.width / 2 - ball.size / 2;
+      ball.y = canvas.height / 2 - ball.size / 2;
+      ball.dx = (Math.random() > 0.5 ? canvas.width * 0.012 : -canvas.width * 0.012);
+      ball.dy = (Math.random() - 0.5) * canvas.height * 0.025;
+    }
+
+    function update() {
+      // Move ball
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Ball collision with top/bottom
+      if (ball.y <= 0 || ball.y + ball.size >= canvas.height) {
+        ball.dy *= -1;
+      }
+
+      // Ball collision with paddles
+      // Left paddle
+      if (
+        ball.x <= paddleWidth &&
+        ball.y + ball.size > leftY &&
+        ball.y < leftY + paddleHeight
+      ) {
+        ball.dx *= -1.1;
+        ball.x = paddleWidth;
+        ball.dy += (Math.random() - 0.5) * 2;
+      }
+      // Right paddle
+      if (
+        ball.x + ball.size >= canvas.width - paddleWidth &&
+        ball.y + ball.size > rightY &&
+        ball.y < rightY + paddleHeight
+      ) {
+        ball.dx *= -1.1;
+        ball.x = canvas.width - paddleWidth - ball.size;
+        ball.dy += (Math.random() - 0.5) * 2;
+      }
+
+      // Score
+      if (ball.x < 0) {
+        rightScore++;
+        updateScore();
+        resetBall();
+      }
+      if (ball.x + ball.size > canvas.width) {
+        leftScore++;
+        updateScore();
+        resetBall();
+      }
+
+      // Simple AI for right paddle
+      if (rightY + paddleHeight / 2 < ball.y) rightY += Math.max(2, canvas.height * 0.012);
+      else if (rightY + paddleHeight / 2 > ball.y) rightY -= Math.max(2, canvas.height * 0.012);
+      rightY = Math.max(0, Math.min(canvas.height - paddleHeight, rightY));
+    }
+
+    function updateScore() {
+      scoreDiv.textContent = `${leftScore} : ${rightScore}`;
+    }
+
+    // Controls
+    let upPressed = false, downPressed = false;
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") upPressed = true;
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") downPressed = true;
+    });
+    document.addEventListener("keyup", e => {
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") upPressed = false;
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") downPressed = false;
+    });
+
+    function movePaddle() {
+      if (upPressed) leftY -= Math.max(4, canvas.height * 0.025);
+      if (downPressed) leftY += Math.max(4, canvas.height * 0.025);
+      leftY = Math.max(0, Math.min(canvas.height - paddleHeight, leftY));
+    }
+
+    // Touch controls for mobile
+    let lastTouchY = null;
+    canvas.addEventListener("touchstart", handleTouch, { passive: false });
+    canvas.addEventListener("touchmove", handleTouch, { passive: false });
+
+    function handleTouch(e) {
+      const rect = canvas.getBoundingClientRect();
+      const touchY = e.touches[0].clientY - rect.top;
+      leftY = touchY - paddleHeight / 2;
+      leftY = Math.max(0, Math.min(canvas.height - paddleHeight, leftY));
+      e.preventDefault();
+    }
+
+    // Reset game on resize
+    window.addEventListener("resize", () => {
+      resetVars();
+      updateScore();
+    });
+
+    function gameLoop() {
+      movePaddle();
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    updateScore();
+    gameLoop();
+  </script>
+</body>
+</html>

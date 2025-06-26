@@ -5,30 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Bird Clone</title>
   <style>
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
+      padding: 0;
+    }
+    body {
       background: #111;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
+      min-height: 100vh;
+      font-family: monospace;
+      overflow: hidden;
     }
-    canvas {
-      background: #222;
+    #score {
+      color: #00ffc3;
+      font-size: 1.5rem;
+      font-family: monospace;
+      margin: 1.2rem 0 0.5rem 0;
+      user-select: none;
+      text-shadow: 0 0 8px #00ffc3;
+      z-index: 10;
+    }
+    #flappy {
+      background: #181c24;
       box-shadow: 0 0 15px #00ffc3;
+      border: 2px solid #00ffc3;
+      display: block;
+      max-width: 98vw;
+      max-height: 80vh;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4/5;
+      touch-action: none;
+    }
+    @media (max-width: 600px) {
+      #score { font-size: 1.1rem; }
+      #flappy { max-height: 60vh; }
     }
   </style>
 </head>
 <body>
-  <canvas id="flappy" width="400" height="500"></canvas>
+  <div id="score">Score: 0</div>
+  <canvas id="flappy"></canvas>
   <script>
+    // Responsive canvas
     const canvas = document.getElementById("flappy");
     const ctx = canvas.getContext("2d");
+    const scoreDiv = document.getElementById("score");
+
+    function resizeCanvas() {
+      // Maintain 4:5 aspect ratio, fit to screen
+      let w = Math.min(window.innerWidth * 0.98, 400);
+      let h = w * 5 / 4;
+      if (window.innerHeight * 0.8 < h) {
+        h = window.innerHeight * 0.8;
+        w = h * 4 / 5;
+      }
+      canvas.width = w;
+      canvas.height = h;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
     let frames = 0;
     const gravity = 0.25;
     const gap = 100;
+    let score = 0;
 
     const bird = {
       x: 50,
@@ -49,9 +94,11 @@
         this.y += this.velocity;
       },
       reset() {
-        this.y = 150;
+        this.y = canvas.height / 3;
         this.velocity = 0;
         pipes.length = 0;
+        score = 0;
+        updateScore();
       },
     };
 
@@ -63,17 +110,23 @@
       ctx.fillStyle = "#ff007c";
       for (let pipe of pipes) {
         ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-        ctx.fillRect(pipe.x, pipe.top + gap, pipeWidth, canvas.height);
+        ctx.fillRect(pipe.x, pipe.top + gap, pipeWidth, canvas.height - pipe.top - gap);
       }
     }
 
     function updatePipes() {
       if (frames % pipeInterval === 0) {
-        let top = Math.floor(Math.random() * 200) + 20;
-        pipes.push({ x: canvas.width, top });
+        let top = Math.floor(Math.random() * (canvas.height - gap - 60)) + 20;
+        pipes.push({ x: canvas.width, top, passed: false });
       }
-      for (let i = 0; i < pipes.length; i++) {
+      for (let i = pipes.length - 1; i >= 0; i--) {
         pipes[i].x -= 2;
+        // Score logic
+        if (!pipes[i].passed && pipes[i].x + pipeWidth < bird.x) {
+          pipes[i].passed = true;
+          score++;
+          updateScore();
+        }
         if (pipes[i].x + pipeWidth < 0) pipes.splice(i, 1);
       }
     }
@@ -88,8 +141,23 @@
           bird.reset();
         }
       }
-      if (bird.y + bird.h >= canvas.height) bird.reset();
+      if (bird.y + bird.h >= canvas.height || bird.y < 0) bird.reset();
     }
+
+    function updateScore() {
+      scoreDiv.textContent = `Score: ${score}`;
+    }
+
+    // Touch controls for mobile
+    canvas.addEventListener("touchstart", function(e) {
+      bird.flap();
+      e.preventDefault();
+    }, { passive: false });
+
+    // Keyboard controls
+    document.addEventListener("keydown", e => {
+      if ([" ", "ArrowUp", "w", "W"].includes(e.key)) bird.flap();
+    });
 
     function loop() {
       frames++;
@@ -102,8 +170,8 @@
       requestAnimationFrame(loop);
     }
 
-    document.addEventListener("keydown", () => bird.flap());
-    loop();
-  </script>
+    updateScore();
+    bird.reset();
+    </script>
 </body>
 </html>
