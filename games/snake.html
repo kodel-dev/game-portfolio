@@ -190,12 +190,95 @@
     @keyframes spin {
       100% { transform: rotate(360deg);}
     }
+    #mobile-warning {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,12,20,0.98);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s;
+    }
+    .mobile-box {
+      background: #181c24;
+      border: 2px solid #00ffc3;
+      border-radius: 18px;
+      box-shadow: 0 0 24px #00ffc3;
+      color: #00ffc3;
+      padding: 2em 1.2em 1.2em 1.2em;
+      text-align: center;
+      max-width: 90vw;
+      width: 320px;
+      font-family: 'Segoe UI', monospace;
+      animation: fadeInUp 0.7s;
+    }
+    .mobile-controls {
+      margin: 1em 0 0.5em 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .mobile-controls button {
+      background: #00ffc3;
+      color: #181c24;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.5em;
+      font-family: inherit;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ffc3;
+      cursor: pointer;
+      margin: 0 0.3em;
+      padding: 0.2em 0.7em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .mobile-controls button:active {
+      background: #ff007c;
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 1em;
+        padding: 0;
+      }
+      #topbar, #leaderboard, #score, #game {
+        max-width: 100vw !important;
+        width: 100vw !important;
+        border-radius: 0 !important;
+      }
+      .mobile-box {
+        width: 95vw;
+        padding: 1.2em 0.5em 1em 0.5em;
+      }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: none;}
+    }
   </style>
 </head>
 <body>
   <div id="loading">
     <div class="spinner"></div>
     <div class="neon-text">🐍 Loading Snake Game...</div>
+  </div>
+  <div id="mobile-warning" style="display:none;">
+    <div class="mobile-box">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">📱</div>
+      <b>Mode Mobile Aktif</b>
+      <p>Geser layar untuk menggerakkan ular.<br>Gunakan tombol di bawah untuk kontrol lebih mudah!</p>
+      <div class="mobile-controls">
+        <button id="btn-up">▲</button>
+        <div>
+          <button id="btn-left">◀</button>
+          <button id="btn-down">▼</button>
+          <button id="btn-right">▶</button>
+        </div>
+      </div>
+      <button id="close-mobile-warning" style="margin-top:1em;">Tutup</button>
+    </div>
   </div>
   <audio id="bgmusic" loop autoplay>
     <source src="https://www.bensound.com/bensound-music/bensound-retrosoul.mp3" type="audio/mpeg" />
@@ -522,6 +605,22 @@
       loading.style.opacity = "0";
       setTimeout(() => loading.style.display = "none", 500);
     });
+
+    // Deteksi mobile dan tampilkan tombol kontrol
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    if (isMobile()) {
+      document.getElementById("mobile-warning").style.display = "flex";
+      // Kontrol tombol
+      document.getElementById("btn-up").onclick = () => { if (dy !== 1) { dx = 0; dy = -1; } };
+      document.getElementById("btn-down").onclick = () => { if (dy !== -1) { dx = 0; dy = 1; } };
+      document.getElementById("btn-left").onclick = () => { if (dx !== 1) { dx = -1; dy = 0; } };
+      document.getElementById("btn-right").onclick = () => { if (dx !== -1) { dx = 1; dy = 0; } };
+      document.getElementById("close-mobile-warning").onclick = () => {
+        document.getElementById("mobile-warning").style.display = "none";
+      };
+    }
   </script>
 </body>
 </html>
