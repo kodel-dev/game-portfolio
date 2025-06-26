@@ -156,13 +156,20 @@
         height: auto !important;
         aspect-ratio: 1/1 !important;
         max-width: 98vw !important;
-        max-height: 98vw !important;
+        max-height: 55vw !important;
         border-radius: 0 !important;
         margin-bottom: 1.2rem;
         display: block;
       }
       #restart, #to-index { font-size: 0.95em; }
-      #leaderboard { font-size: 0.95em; }
+      #leaderboard {
+        max-width: 98vw !important;
+        width: 98vw !important;
+        font-size: 0.95em;
+      }
+      #mobile-controls-fixed {
+        margin-top: 1.2rem;
+      }
     }
     #loading {
       position: fixed;
@@ -358,7 +365,7 @@
 
     function resizeCanvas() {
       let w = window.innerWidth * 0.98;
-      let h = window.innerHeight * 0.98;
+      let h = window.innerHeight * 0.45;
       let size = Math.min(w, h, 420);
       canvas.width = size;
       canvas.height = size;
