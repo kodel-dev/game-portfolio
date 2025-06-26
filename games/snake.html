@@ -81,19 +81,14 @@
       color: #fff;
     }
     #game {
-      background: linear-gradient(135deg, #181c24 60%, #232b3a 100%);
-      box-shadow: 0 0 30px #00ffc3, 0 8px 40px #000c inset;
-      border: 2px solid #00ffc3;
-      display: block;
-      max-width: 98vw;
-      max-height: 70vh;
-      width: auto;
-      height: auto;
-      aspect-ratio: 1/1;
-      touch-action: none;
-      border-radius: 18px;
+      width: 98vw !important;
+      height: auto !important;
+      aspect-ratio: 1/1 !important;
+      max-width: 98vw !important;
+      max-height: 60vh !important; /* gunakan tinggi layar, bukan lebar! */
+      border-radius: 0 !important;
       margin-bottom: 1.2rem;
-      z-index: 2;
+      display: block;
     }
     #restart {
       background: #00ffc3;
@@ -365,7 +360,7 @@
 
     function resizeCanvas() {
       let w = window.innerWidth * 0.98;
-      let h = window.innerHeight * 0.45;
+      let h = window.innerHeight * 0.60; // gunakan 60% tinggi layar
       let size = Math.min(w, h, 420);
       canvas.width = size;
       canvas.height = size;
