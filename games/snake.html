@@ -313,7 +313,23 @@
       </div>
     </div>
   </div>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
+    // Inisialisasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJpD8CiFMXurEluDXFm-OOFq25AxcKaZc",
+      authDomain: "realtime-database-e40d7.firebaseapp.com",
+      databaseURL: "https://realtime-database-e40d7-default-rtdb.asia-southeast1.firebasedatabase.app", // tambahkan ini!
+      projectId: "realtime-database-e40d7",
+      storageBucket: "realtime-database-e40d7.appspot.com",
+      messagingSenderId: "492479633070",
+      appId: "1:492479633070:web:232342bbe13c77bc337f3f",
+      measurementId: "G-W2BB061VJH"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     // Responsive canvas
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
@@ -657,6 +673,26 @@
       document.getElementById("btn-down-fixed").onclick = () => { if (dy !== -1) { dx = 0; dy = 1; } };
       document.getElementById("btn-left-fixed").onclick = () => { if (dx !== 1) { dx = -1; dy = 0; } };
       document.getElementById("btn-right-fixed").onclick = () => { if (dx !== -1) { dx = 1; dy = 0; } };
+    }
+
+    function updateLeaderboardFirebase(name, score) {
+      const now = new Date();
+      const hourKey = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
+      const userKey = name.replace(/[^a-zA-Z0-9]/g, "_");
+      db.ref(`leaderboard/${hourKey}/${userKey}`).set({
+        name: name,
+        score: score
+      });
+    }
+
+    function loadLeaderboardFirebase(callback) {
+      const now = new Date();
+      const hourKey = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
+      db.ref(`leaderboard/${hourKey}`).on('value', snap => {
+        const data = snap.val() || {};
+        const arr = Object.values(data).sort((a, b) => b.score - a.score).slice(0, 5);
+        callback(arr);
+      });
     }
   </script>
 </body>
