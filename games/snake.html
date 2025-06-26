@@ -153,9 +153,9 @@
       #score { font-size: 1em; }
       #game {
         max-width: 98vw !important;
-        max-height: 60vw !important;
+        max-height: 60vh !important;
         width: 98vw !important;
-        height: 98vw !important;
+        height: auto !important;
         aspect-ratio: 1/1 !important;
         border-radius: 0 !important;
         margin-bottom: 1.2rem;
@@ -607,14 +607,6 @@
       lbList.innerHTML = leaderboard.length
         ? leaderboard.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
         : "<li>No score yet</li>";
-      // Tampilkan user yang pernah akses
-      let users = [];
-      try {
-        users = JSON.parse(localStorage.getItem("snake_users")) || [];
-      } catch {}
-      if (users.length) {
-        lbList.innerHTML += `<li style="margin-top:1em;color:#aaa;font-size:0.95em;">👥 User Pernah Akses:<br>${users.map(u=>`<span>${u}</span>`).join(", ")}</li>`;
-      }
     }
 
     // Timer realtime ke jam berikutnya
