@@ -689,9 +689,16 @@
       const now = new Date();
       const hourKey = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
       const userKey = name.replace(/[^a-zA-Z0-9]/g, "_");
-      db.ref(`leaderboard/${hourKey}/${userKey}`).set({
-        name: name,
-        score: score
+      // Cek skor lama, hanya update jika skor baru lebih tinggi
+      db.ref(`leaderboard/${hourKey}/${userKey}`).once('value', snap => {
+        const old = snap.val();
+        if (!old || score > old.score) {
+          db.ref(`leaderboard/${hourKey}/${userKey}`).set({
+            name: name,
+            score: score
+          });
+        }
+        // Jika skor baru lebih rendah, tidak melakukan apa-apa
       });
     }
     function loadLeaderboardFirebase(callback) {
