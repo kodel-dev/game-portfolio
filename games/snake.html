@@ -81,68 +81,18 @@
       color: #fff;
     }
     #game {
-      width: 98vw !important;
-      height: auto !important;
-      aspect-ratio: 1/1 !important;
-      max-width: 98vw !important;
-      max-height: 60vh !important; /* gunakan tinggi layar! */
-      border-radius: 0 !important;
+      width: 420px;
+      height: 420px;
+      aspect-ratio: 1/1;
+      max-width: 98vw;
+      max-height: 70vh;
+      border-radius: 18px;
       margin-bottom: 1.2rem;
       display: block;
-    }
-    #restart {
-      background: #00ffc3;
-      color: #181c24;
-      border: none;
-      border-radius: 8px;
-      padding: 0.7em 1.5em;
-      font-size: 1.1em;
-      font-family: inherit;
-      font-weight: bold;
-      box-shadow: 0 0 10px #00ffc3;
-      cursor: pointer;
-      margin-bottom: 1.2rem;
-      transition: background 0.2s, color 0.2s;
-      display: none;
-    }
-    #restart:hover {
-      background: #ff007c;
-      color: #fff;
-    }
-    #leaderboard {
-      background: rgba(24,28,36,0.95);
-      border: 2px solid #00ffc3;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #00ffc3;
-      color: #00ffc3;
-      font-family: monospace;
-      margin: 0.5rem 0 1.2rem 0;
-      padding: 0.7em 1.2em;
-      max-width: 420px;
-      width: 100%;
-      text-align: left;
-      z-index: 2;
-    }
-    #leaderboard h3 {
-      margin: 0 0 0.5em 0;
-      font-size: 1.1em;
-      color: #ff007c;
-      letter-spacing: 1px;
-    }
-    #leaderboard ol {
-      margin: 0;
-      padding-left: 1.2em;
-    }
-    #leaderboard li {
-      margin-bottom: 0.2em;
-      font-size: 1em;
-      color: #00ffc3;
-      text-shadow: 0 0 4px #00ffc3;
-    }
-    #lb-timer {
-      font-size:0.9em;
-      color:#aaa;
-      margin-top:0.5em;
+      background: #181c24;
+      box-shadow: 0 0 32px #00ffc388, 0 0 0 4px #00ffc3;
+      border: 2.5px solid #00ffc3;
+      transition: box-shadow 0.3s, border-radius 0.3s;
     }
     @media (max-width: 600px) {
       #score { font-size: 1em; }
@@ -151,10 +101,12 @@
         height: auto !important;
         aspect-ratio: 1/1 !important;
         max-width: 98vw !important;
-        max-height: 60vh !important; /* gunakan tinggi layar! */
-        border-radius: 0 !important;
+        max-height: 60vw !important;
+        border-radius: 12px !important;
         margin-bottom: 1.2rem;
         display: block;
+        box-shadow: 0 0 18px #00ffc388, 0 0 0 2px #00ffc3;
+        border: 2px solid #00ffc3;
       }
       #restart, #to-index { font-size: 0.95em; }
       #leaderboard {
@@ -359,13 +311,14 @@
     }
 
     function resizeCanvas() {
-      let w = window.innerWidth * 0.98;
-      let h = window.innerHeight * 0.60; // gunakan 60% tinggi layar
-      let size = Math.min(w, h, 420);
+      // Ambil lebar dan tinggi viewport
+      let w = Math.min(window.innerWidth * 0.98, 420);
+      let h = Math.min(window.innerHeight * 0.7, 420);
+      // Pilih ukuran terkecil agar selalu muat
+      let size = Math.min(w, h);
       canvas.width = size;
       canvas.height = size;
       grid = Math.floor(size / tileCount);
-      // Pastikan grid minimal 10 agar snake tidak terlalu kecil
       if (grid < 10) grid = 10;
     }
     resizeCanvas();
