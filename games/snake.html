@@ -151,7 +151,15 @@
     }
     @media (max-width: 600px) {
       #score { font-size: 1em; }
-      #game { max-height: 60vh; }
+      #game {
+        max-width: 98vw !important;
+        max-height: 60vw !important;
+        width: 98vw !important;
+        height: 98vw !important;
+        aspect-ratio: 1/1 !important;
+        border-radius: 0 !important;
+        margin-bottom: 1.2rem;
+      }
       #restart, #to-index { font-size: 0.95em; }
       #leaderboard { font-size: 0.95em; }
     }
@@ -331,7 +339,9 @@
     }
 
     function resizeCanvas() {
-      let size = Math.min(window.innerWidth * 0.98, window.innerHeight * 0.7, 420);
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      let size = Math.min(w * 0.98, h * 0.6, 420);
       canvas.width = size;
       canvas.height = size;
       grid = Math.floor(size / tileCount);
@@ -525,49 +535,54 @@
     }
     const deviceName = getDeviceName();
 
-    // Leaderboard with name and reset after 24h (no manual reset)
-    function loadLeaderboard() {
+    // --- Tambahkan untuk menyimpan data user yang pernah akses ---
+    function saveUserAccess() {
+      let users = [];
       try {
-        const lbObj = JSON.parse(localStorage.getItem("snake_leaderboard_obj")) || {};
-        leaderboard = lbObj.scores || [];
-        leaderboardTimestamp = lbObj.timestamp || 0;
-        // Reset if more than 24h
-        if (Date.now() - leaderboardTimestamp > 24 * 60 * 60 * 1000) {
-          leaderboard = [];
-          leaderboardTimestamp = Date.now();
-          saveLeaderboard();
-        }
+        users = JSON.parse(localStorage.getItem("snake_users")) || [];
+      } catch {}
+      // Cek apakah deviceName sudah ada
+      if (!users.includes(deviceName)) {
+        users.push(deviceName);
+        localStorage.setItem("snake_users", JSON.stringify(users));
+      }
+    }
+    saveUserAccess();
+
+    // --- Leaderboard realtime sesuai jam (reset otomatis setiap jam baru) ---
+    function getLeaderboardKey() {
+      const now = new Date();
+      // Format: YYYYMMDDHH (per jam)
+      return `snake_leaderboard_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
+    }
+
+    function loadLeaderboard() {
+      const key = getLeaderboardKey();
+      try {
+        leaderboard = JSON.parse(localStorage.getItem(key)) || [];
       } catch {
         leaderboard = [];
-        leaderboardTimestamp = Date.now();
-        saveLeaderboard();
       }
       renderLeaderboard();
       updateLbTimer();
     }
     function saveLeaderboard() {
-      localStorage.setItem("snake_leaderboard_obj", JSON.stringify({
-        scores: leaderboard,
-        timestamp: leaderboardTimestamp
-      }));
+      const key = getLeaderboardKey();
+      localStorage.setItem(key, JSON.stringify(leaderboard));
     }
     function updateLeaderboard(newScore) {
       if (!newScore) return;
-      // Cek apakah deviceName sudah ada di leaderboard
       const idx = leaderboard.findIndex(entry => entry.name === deviceName);
       if (idx !== -1) {
-        // Jika score baru lebih tinggi, update
         if (newScore > leaderboard[idx].score) {
           leaderboard[idx].score = newScore;
         }
       } else {
-        // Jika belum ada, tambahkan
         leaderboard.push({ name: deviceName, score: newScore });
       }
       leaderboard = leaderboard
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
-      leaderboardTimestamp = leaderboardTimestamp || Date.now();
       saveLeaderboard();
       renderLeaderboard();
       updateLbTimer();
@@ -576,29 +591,37 @@
       lbList.innerHTML = leaderboard.length
         ? leaderboard.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
         : "<li>No score yet</li>";
+      // Tampilkan user yang pernah akses
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("snake_users")) || [];
+      } catch {}
+      if (users.length) {
+        lbList.innerHTML += `<li style="margin-top:1em;color:#aaa;font-size:0.95em;">👥 User Pernah Akses:<br>${users.map(u=>`<span>${u}</span>`).join(", ")}</li>`;
+      }
     }
 
-    // Timer until reset
+    // Timer realtime ke jam berikutnya
     function updateLbTimer() {
-      if (!leaderboardTimestamp) {
-        lbTimer.textContent = "";
-        return;
-      }
-      const msLeft = leaderboardTimestamp + 24 * 60 * 60 * 1000 - Date.now();
+      const now = new Date();
+      const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours()+1, 0, 0, 0);
+      const msLeft = nextHour - now;
       if (msLeft <= 0) {
-        leaderboard = [];
-        leaderboardTimestamp = Date.now();
-        saveLeaderboard();
-        renderLeaderboard();
+        loadLeaderboard(); // reload leaderboard saat jam berganti
         lbTimer.textContent = "Leaderboard reset!";
+        setTimeout(updateLbTimer, 1000);
         return;
       }
-      const h = Math.floor(msLeft / 3600000);
       const m = Math.floor((msLeft % 3600000) / 60000);
       const s = Math.floor((msLeft % 60000) / 1000);
-      lbTimer.textContent = `Leaderboard resets in ${h}h ${m}m ${s}s`;
+      lbTimer.textContent = `Leaderboard resets in ${m}m ${s}s (per jam)`;
       setTimeout(updateLbTimer, 1000);
     }
+
+    // Init
+    loadLeaderboard();
+    resetGame();
+    requestAnimationFrame(loop);
 
     // Backsound auto play fix for mobile
     document.body.addEventListener('touchstart', function playAudioOnce() {
@@ -606,11 +629,7 @@
       document.body.removeEventListener('touchstart', playAudioOnce);
     });
 
-    // Init
-    loadLeaderboard();
-    resetGame();
-    requestAnimationFrame(loop);
-
+    // Loading hilang setelah halaman siap
     window.addEventListener("load", () => {
       const loading = document.getElementById("loading");
       loading.style.opacity = "0";
