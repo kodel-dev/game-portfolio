@@ -267,6 +267,9 @@
       to { opacity: 1; transform: none;}
     }
   </style>
+  <!-- Tambahkan di <head> sebelum script JS kamu -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div id="loading">
@@ -314,8 +317,6 @@
       </div>
     </div>
   </div>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
     // Inisialisasi Firebase
     const firebaseConfig = {
@@ -608,6 +609,12 @@
       lbList.innerHTML = arr.length
         ? arr.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
         : "<li>No score yet</li>";
+      // Loading hilang setelah leaderboard tampil
+      const loading = document.getElementById("loading");
+      if (loading) {
+        loading.style.opacity = "0";
+        setTimeout(() => loading.style.display = "none", 500);
+      }
     }
     loadLeaderboardFirebase(renderLeaderboard);
 
@@ -669,6 +676,7 @@
       document.getElementById("btn-right-fixed").onclick = () => { if (dx !== -1) { dx = 1; dy = 0; } };
     }
 
+    // Leaderboard Firebase
     function updateLeaderboardFirebase(name, score) {
       const now = new Date();
       const hourKey = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
@@ -678,7 +686,6 @@
         score: score
       });
     }
-
     function loadLeaderboardFirebase(callback) {
       const now = new Date();
       const hourKey = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`;
