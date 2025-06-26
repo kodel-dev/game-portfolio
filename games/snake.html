@@ -636,9 +636,9 @@
     }
 
     // Init
-    loadLeaderboard();
     resetGame();
     requestAnimationFrame(loop);
+    loadLeaderboardFirebase(renderLeaderboard);
 
     // Backsound auto play fix for mobile
     document.body.addEventListener('touchstart', function playAudioOnce() {
