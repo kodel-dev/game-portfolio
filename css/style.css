@@ -158,3 +158,11 @@ footer {
     font-size: 1.1rem;
   }
 }
+
+body, .container, ul, li, h1, h2, h3, h4, h5, h6, footer, #typing {
+  cursor: default;
+}
+
+a, button, [role="button"] {
+  cursor: pointer;
+}

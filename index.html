@@ -9,47 +9,74 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #050505, #0a0a0a);
+      /* Keren: gradient + animated glowing grid overlay + particles */
+      background: linear-gradient(135deg, #050505 0%, #181c24 100%);
       color: #00ffc3;
       overflow-x: hidden;
+      position: relative;
     }
-    html[data-theme='light'] body {
-      background: linear-gradient(135deg, #ffffff, #e0e0e0);
-      color: #111;
+    /* Animated glowing grid overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      z-index: 0;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(90deg, #00ffc322 0 2px, transparent 2px 80px),
+        repeating-linear-gradient(0deg, #00ffc322 0 2px, transparent 2px 80px);
+      animation: gridmove 8s linear infinite;
+      opacity: 0.25;
     }
-    html[data-theme='light'] .container {
-      background: rgba(255,255,255,0.9);
-      color: #111;
-      border-color: #111;
-    }
-    html[data-theme='light'] ul li a {
-      color: #111;
-      border-color: #111;
-    }
-    html[data-theme='light'] ul li a:hover {
-      background-color: #11111111;
-    }
-    html[data-theme='light'] footer {
-      color: #111;
+    @keyframes gridmove {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 80px 80px, 80px 80px; }
     }
     #particles-js {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: -1;
+      z-index: 1;
+      pointer-events: none;
     }
     #loading {
       position: fixed;
       inset: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #000;
+      background: #050505;
       color: #00ffc3;
       font-size: 1.5rem;
       z-index: 9999;
+      letter-spacing: 2px;
+      transition: opacity 0.5s;
+    }
+    #loading .spinner {
+      margin-bottom: 1.2em;
+      width: 54px;
+      height: 54px;
+      border: 5px solid #00ffc3;
+      border-top: 5px solid #ff007c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite, neonPulse 2s infinite alternate;
+      box-shadow: 0 0 24px #00ffc3, 0 0 8px #00bfff;
+    }
+    #loading .neon-text {
+      font-size: 1.3em;
+      font-family: 'Segoe UI', monospace;
+      text-shadow: 0 0 12px #00ffc3, 0 0 8px #ff007c;
+      margin-bottom: 0.5em;
+      letter-spacing: 2px;
+      animation: neonPulse 2s infinite alternate;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg);}
     }
     .container {
+      position: relative;
+      z-index: 2;
       max-width: 800px;
       margin: 10vh auto;
       text-align: center;
@@ -58,7 +85,6 @@
       border: 2px solid #00ffc3;
       box-shadow: 0 0 32px #00ffc3;
       background: rgba(0,0,0,0.55);
-      position: relative;
       animation: fadeInUp 1s cubic-bezier(.23,1.01,.32,1) both;
       backdrop-filter: blur(4px);
     }
@@ -84,6 +110,19 @@
       min-height: 1.2em;
       letter-spacing: 1px;
       margin-bottom: 1.2em;
+    }
+    #typing .cursor {
+      display: inline-block;
+      width: 1ch;
+      color: #00ffc3;
+      animation: blink 1s steps(1) infinite;
+      font-weight: bold;
+      vertical-align: middle;
+      cursor: default;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0; }
     }
     ul {
       list-style: none;
@@ -146,21 +185,24 @@
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
 <body>
-  <div id="loading">🚀 Loading Kodel's Game Lab...</div>
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="neon-text">🚀 Loading Kodel's Game Lab...</div>
+  </div>
   <div id="particles-js"></div>
   <div class="container">
     <h1>Kodel's Cyber Game Lab</h1>
     <div id="typing"></div>
     <ul>
-      <li><a href="games/snake.html" target="_blank">🐍 Snake Game</a></li>
-      <li><a href="games/flappy.html" target="_blank">🐤 Flappy Bird</a></li>
-      <li><a href="games/tetris.html" target="_blank">🧱 Tetris Mini</a></li>
-      <li><a href="games/pong.html" target="_blank">🏓 Pong</a></li>
+      <li><a href="games/snake.html">🐍 Snake Game</a></li>
+      <li><a href="games/flappy.html">🐤 Flappy Bird</a></li>
+      <li><a href="games/tetris.html">🧱 Tetris Mini</a></li>
+      <li><a href="games/pong.html">🏓 Pong</a></li>
       <li><a href="https://github.com/kodel-dev" target="_blank">🌐 GitHub: kodel-dev</a></li>
     </ul>
     <footer>
-      Made with 💙 by <a href="https://github.com/kodel-dev" target="_blank" style="color:#00ffc3;text-decoration:underline;">kodel-dev</a> • 
-      <span style="color:#aaa;">github.com/kodel-dev</span>
+       &copy; 2025 <a href="https://github.com/kodel-dev" target="_blank" style="color:#00ffc3; text-decoration:none;">kodel-dev</a> • 
+      <span style="color:#aaa;">All rights reserved</span>
     </footer>
   </div>
 
@@ -186,7 +228,9 @@
 
   <script>
     window.addEventListener("load", () => {
-      document.getElementById("loading").style.display = "none";
+      const loading = document.getElementById("loading");
+      loading.style.opacity = "0";
+      setTimeout(() => loading.style.display = "none", 500);
     });
 
     const audio = document.getElementById("bgmusic");
@@ -210,13 +254,38 @@
     });
 
     // Teks typing sesuai profil dan project di github.com/kodel-dev
-    const typingText = "Web & Game Developer | ZEPETO World Creator | Portfolio: Game, Web, 3D, AI, Tools, UI/UX | github.com/kodel-dev";
+    const typingText = "Web & Game Developer | ZEPETO World Creator | Game, Web, 3D, AI, Tools, UI/UX";
     const typingDiv = document.getElementById("typing");
     let idx = 0;
-    setInterval(() => {
-      typingDiv.textContent = typingText.slice(0, idx++) + '_';
-      if (idx > typingText.length) idx = 0;
-    }, 120);
+    let typing = true;
+    let hold = 0;
+
+    function typeEffect() {
+      if (typing) {
+        typingDiv.innerHTML = typingText.slice(0, idx) + '<span class="cursor">|</span>';
+        if (idx < typingText.length) {
+          idx++;
+          setTimeout(typeEffect, 60);
+        } else {
+          typing = false;
+          hold = 18;
+          setTimeout(typeEffect, 60);
+        }
+      } else {
+        if (hold > 0) {
+          hold--;
+          setTimeout(typeEffect, 60);
+        } else if (idx > 0) {
+          idx--;
+          typingDiv.innerHTML = typingText.slice(0, idx) + '<span class="cursor">|</span>';
+          setTimeout(typeEffect, 30);
+        } else {
+          typing = true;
+          setTimeout(typeEffect, 300);
+        }
+      }
+    }
+    typeEffect();
   </script>
 </body>
 </html>

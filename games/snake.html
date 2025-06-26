@@ -11,59 +11,233 @@
       padding: 0;
     }
     body {
-      background: #111;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      /* 3D dark background effect */
+      background: #0d0d1a;
+      background-image:
+        linear-gradient(135deg, #181c24 60%, #232b3a 100%),
+        repeating-linear-gradient(135deg, #00ffc31a 0 2px, transparent 2px 80px),
+        repeating-linear-gradient(45deg, #ff007c11 0 2px, transparent 2px 80px),
+        radial-gradient(circle at 80% 20%, #2afadf22 0%, transparent 60%);
+      /* 3D grid overlay */
+      position: relative;
       min-height: 100vh;
       color: #00ffc3;
       font-family: monospace;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      z-index: 0;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(90deg, #00ffc322 0 2px, transparent 2px 80px),
+        repeating-linear-gradient(0deg, #00ffc322 0 2px, transparent 2px 80px);
+      opacity: 0.18;
+      filter: blur(1px);
+      transform: perspective(600px) rotateX(18deg) scaleY(1.2);
+    }
+    #topbar {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1.2rem 0 0.5rem 0;
+      gap: 0.5rem;
+      z-index: 2;
     }
     #score {
       color: #00ffc3;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-family: monospace;
-      margin: 1.2rem 0 0.5rem 0;
       user-select: none;
       text-shadow: 0 0 8px #00ffc3;
       z-index: 10;
+      flex: 1;
+      text-align: left;
+    }
+    #to-index {
+      background: #00ffc3;
+      color: #181c24;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      font-family: inherit;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ffc3;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      margin-right: 0.5em;
+    }
+    #to-index:hover {
+      background: #ff007c;
+      color: #fff;
     }
     #game {
-      background-color: #181c24;
-      box-shadow: 0 0 15px #00ffc3;
+      background: linear-gradient(135deg, #181c24 60%, #232b3a 100%);
+      box-shadow: 0 0 30px #00ffc3, 0 8px 40px #000c inset;
       border: 2px solid #00ffc3;
       display: block;
       max-width: 98vw;
-      max-height: 70vw;
-      width: 100%;
+      max-height: 70vh;
+      width: auto;
       height: auto;
       aspect-ratio: 1/1;
       touch-action: none;
+      border-radius: 18px;
+      margin-bottom: 1.2rem;
+      z-index: 2;
+    }
+    #restart {
+      background: #00ffc3;
+      color: #181c24;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7em 1.5em;
+      font-size: 1.1em;
+      font-family: inherit;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ffc3;
+      cursor: pointer;
+      margin-bottom: 1.2rem;
+      transition: background 0.2s, color 0.2s;
+      display: none;
+    }
+    #restart:hover {
+      background: #ff007c;
+      color: #fff;
+    }
+    #leaderboard {
+      background: rgba(24,28,36,0.95);
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00ffc3;
+      color: #00ffc3;
+      font-family: monospace;
+      margin: 0.5rem 0 1.2rem 0;
+      padding: 0.7em 1.2em;
+      max-width: 420px;
+      width: 100%;
+      text-align: left;
+      z-index: 2;
+    }
+    #leaderboard h3 {
+      margin: 0 0 0.5em 0;
+      font-size: 1.1em;
+      color: #ff007c;
+      letter-spacing: 1px;
+    }
+    #leaderboard ol {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+    #leaderboard li {
+      margin-bottom: 0.2em;
+      font-size: 1em;
+      color: #00ffc3;
+      text-shadow: 0 0 4px #00ffc3;
+    }
+    #lb-timer {
+      font-size:0.9em;
+      color:#aaa;
+      margin-top:0.5em;
     }
     @media (max-width: 600px) {
-      #score { font-size: 1.1rem; }
+      #score { font-size: 1em; }
       #game { max-height: 60vw; }
+      #restart, #to-index { font-size: 0.95em; }
+      #leaderboard { font-size: 0.95em; }
+    }
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d1a;
+      color: #00ffc3;
+      font-size: 1.5rem;
+      z-index: 9999;
+      letter-spacing: 2px;
+      transition: opacity 0.5s;
+    }
+    #loading .spinner {
+      margin-bottom: 1.2em;
+      width: 54px;
+      height: 54px;
+      border: 5px solid #00ffc3;
+      border-top: 5px solid #ff007c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite, neonPulse 2s infinite alternate;
+      box-shadow: 0 0 24px #00ffc3, 0 0 8px #00bfff;
+    }
+    #loading .neon-text {
+      font-size: 1.3em;
+      font-family: 'Segoe UI', monospace;
+      text-shadow: 0 0 12px #00ffc3, 0 0 8px #ff007c;
+      margin-bottom: 0.5em;
+      letter-spacing: 2px;
+      animation: neonPulse 2s infinite alternate;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg);}
     }
   </style>
 </head>
 <body>
-  <div id="score">Score: 0</div>
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="neon-text">🐍 Loading Snake Game...</div>
+  </div>
+  <audio id="bgmusic" loop autoplay>
+    <source src="https://www.bensound.com/bensound-music/bensound-retrosoul.mp3" type="audio/mpeg" />
+  </audio>
+  <div id="topbar">
+    <div id="score">Score: 0</div>
+    <button id="to-index" onclick="window.location.href='../index.html'">🏠 Home</button>
+  </div>
   <canvas id="game"></canvas>
+  <button id="restart">Restart</button>
+  <div id="leaderboard">
+    <h3>🏆 Leaderboard</h3>
+    <ol id="lb-list"></ol>
+    <div id="lb-timer"></div>
+  </div>
   <script>
     // Responsive canvas
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
     const scoreDiv = document.getElementById("score");
+    const restartBtn = document.getElementById("restart");
+    const lbList = document.getElementById("lb-list");
+    const lbTimer = document.getElementById("lb-timer");
+    const bgmusic = document.getElementById("bgmusic");
 
     let grid = 20;
     let tileCount = 20;
-    let snake, dx, dy, food, count, score;
+    let snake, dx, dy, food, count, score, gameOver, bestScore = 0;
+    let leaderboard = [];
+    let leaderboardTimestamp = 0;
+
+    // Rainbow color generator
+    function rainbowColor(i, total) {
+      const freq = 2 * Math.PI / total;
+      const r = Math.floor(Math.sin(freq * i + 0) * 127 + 128);
+      const g = Math.floor(Math.sin(freq * i + 2) * 127 + 128);
+      const b = Math.floor(Math.sin(freq * i + 4) * 127 + 128);
+      return `rgb(${r},${g},${b})`;
+    }
 
     function resizeCanvas() {
-      // Maintain 1:1 aspect ratio, fit to screen
-      let size = Math.min(window.innerWidth * 0.98, window.innerHeight * 0.7);
+      let size = Math.min(window.innerWidth * 0.98, window.innerHeight * 0.7, 420);
       canvas.width = size;
       canvas.height = size;
       grid = Math.floor(size / tileCount);
@@ -74,19 +248,75 @@
     function resetGame() {
       snake = [{ x: 8, y: 8 }];
       dx = 1; dy = 0;
-      food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+      food = randomFood();
       count = 0;
       score = 0;
+      gameOver = false;
       updateScore();
+      restartBtn.style.display = "none";
+    }
+
+    function randomFood() {
+      let pos;
+      do {
+        pos = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } while (snake && snake.some(p => p.x === pos.x && p.y === pos.y));
+      return pos;
     }
 
     function updateScore() {
-      scoreDiv.textContent = `Score: ${score}`;
+      scoreDiv.textContent = `Score: ${score}` + (bestScore ? ` | Best: ${bestScore}` : "");
+    }
+
+    function drawSnake() {
+      for (let i = 0; i < snake.length; i++) {
+        ctx.fillStyle = rainbowColor(i, snake.length);
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.shadowBlur = i === 0 ? 12 : 4;
+        ctx.fillRect(snake[i].x * grid, snake[i].y * grid, grid - 2, grid - 2);
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    function drawFood() {
+      ctx.save();
+      ctx.shadowColor = "#ff007c";
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = "#ff007c";
+      ctx.beginPath();
+      ctx.arc(
+        food.x * grid + grid / 2,
+        food.y * grid + grid / 2,
+        grid / 2.2,
+        0, Math.PI * 2
+      );
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawGameOver() {
+      ctx.save();
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = "#181c24";
+      ctx.fillRect(0, canvas.height / 2 - 60, canvas.width, 120);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ff007c";
+      ctx.font = `bold ${Math.floor(canvas.width / 13)}px monospace`;
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 10);
+      ctx.fillStyle = "#00ffc3";
+      ctx.font = `bold ${Math.floor(canvas.width / 22)}px monospace`;
+      ctx.fillText("Tap or Press Restart", canvas.width / 2, canvas.height / 2 + 30);
+      ctx.restore();
     }
 
     function loop() {
+      if (gameOver) return;
       requestAnimationFrame(loop);
-      if (++count < 6) return;
+      if (++count < 10) return; // slow snake
       count = 0;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -97,20 +327,16 @@
       // Eat food
       if (head.x === food.x && head.y === food.y) {
         score++;
+        if (score > bestScore) bestScore = score;
         updateScore();
-        food.x = Math.floor(Math.random() * tileCount);
-        food.y = Math.floor(Math.random() * tileCount);
+        food = randomFood();
       } else {
         snake.pop();
       }
 
-      // Draw snake
-      ctx.fillStyle = "#00ffc3";
-      snake.forEach(p => ctx.fillRect(p.x * grid, p.y * grid, grid - 2, grid - 2));
-
-      // Draw food
-      ctx.fillStyle = "#ff007c";
-      ctx.fillRect(food.x * grid, food.y * grid, grid - 2, grid - 2);
+      // Draw food and snake
+      drawFood();
+      drawSnake();
 
       // Collision
       if (
@@ -118,12 +344,20 @@
         head.y < 0 || head.y >= tileCount ||
         snake.slice(1).some(p => p.x === head.x && p.y === head.y)
       ) {
-        resetGame();
+        gameOver = true;
+        drawGameOver();
+        restartBtn.style.display = "inline-block";
+        updateLeaderboard(score);
       }
     }
 
     // Keyboard controls
     document.addEventListener("keydown", e => {
+      if (gameOver && (e.key === " " || e.key === "Enter")) {
+        resetGame();
+        requestAnimationFrame(loop);
+        return;
+      }
       if ((e.key === "ArrowLeft" || e.key === "a" || e.key === "A") && dx !== 1) {
         dx = -1; dy = 0;
       } else if ((e.key === "ArrowUp" || e.key === "w" || e.key === "W") && dy !== 1) {
@@ -138,6 +372,11 @@
     // Touch controls for mobile
     let touchStartX = null, touchStartY = null;
     canvas.addEventListener("touchstart", function(e) {
+      if (gameOver) {
+        resetGame();
+        requestAnimationFrame(loop);
+        return;
+      }
       if (e.touches.length === 1) {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
@@ -159,7 +398,130 @@
       touchStartY = null;
     }, { passive: false });
 
+    // Restart button
+    restartBtn.addEventListener("click", () => {
+      resetGame();
+      requestAnimationFrame(loop);
+    });
+
+    // Tap canvas to restart on mobile
+    canvas.addEventListener("click", () => {
+      if (gameOver) {
+        resetGame();
+        requestAnimationFrame(loop);
+      }
+    });
+
+    // Save best score in localStorage
+    if (localStorage.getItem("snake_best")) {
+      bestScore = parseInt(localStorage.getItem("snake_best")) || 0;
+    }
+    function saveBest() {
+      localStorage.setItem("snake_best", bestScore);
+    }
+    window.addEventListener("beforeunload", saveBest);
+
+    // Device name (simple, fallback to userAgent if not available)
+    function getDeviceName() {
+      if (navigator.userAgentData && navigator.userAgentData.platform) {
+        return navigator.userAgentData.platform;
+      }
+      if (navigator.platform) return navigator.platform;
+      return navigator.userAgent || "Unknown";
+    }
+    const deviceName = getDeviceName();
+
+    // Leaderboard with name and reset after 24h (no manual reset)
+    function loadLeaderboard() {
+      try {
+        const lbObj = JSON.parse(localStorage.getItem("snake_leaderboard_obj")) || {};
+        leaderboard = lbObj.scores || [];
+        leaderboardTimestamp = lbObj.timestamp || 0;
+        // Reset if more than 24h
+        if (Date.now() - leaderboardTimestamp > 24 * 60 * 60 * 1000) {
+          leaderboard = [];
+          leaderboardTimestamp = Date.now();
+          saveLeaderboard();
+        }
+      } catch {
+        leaderboard = [];
+        leaderboardTimestamp = Date.now();
+        saveLeaderboard();
+      }
+      renderLeaderboard();
+      updateLbTimer();
+    }
+    function saveLeaderboard() {
+      localStorage.setItem("snake_leaderboard_obj", JSON.stringify({
+        scores: leaderboard,
+        timestamp: leaderboardTimestamp
+      }));
+    }
+    function updateLeaderboard(newScore) {
+      if (!newScore) return;
+      // Cek apakah deviceName sudah ada di leaderboard
+      const idx = leaderboard.findIndex(entry => entry.name === deviceName);
+      if (idx !== -1) {
+        // Jika score baru lebih tinggi, update
+        if (newScore > leaderboard[idx].score) {
+          leaderboard[idx].score = newScore;
+        }
+      } else {
+        // Jika belum ada, tambahkan
+        leaderboard.push({ name: deviceName, score: newScore });
+      }
+      leaderboard = leaderboard
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+      leaderboardTimestamp = leaderboardTimestamp || Date.now();
+      saveLeaderboard();
+      renderLeaderboard();
+      updateLbTimer();
+    }
+    function renderLeaderboard() {
+      lbList.innerHTML = leaderboard.length
+        ? leaderboard.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
+        : "<li>No score yet</li>";
+    }
+
+    // Timer until reset
+    function updateLbTimer() {
+      if (!leaderboardTimestamp) {
+        lbTimer.textContent = "";
+        return;
+      }
+      const msLeft = leaderboardTimestamp + 24 * 60 * 60 * 1000 - Date.now();
+      if (msLeft <= 0) {
+        leaderboard = [];
+        leaderboardTimestamp = Date.now();
+        saveLeaderboard();
+        renderLeaderboard();
+        lbTimer.textContent = "Leaderboard reset!";
+        return;
+      }
+      const h = Math.floor(msLeft / 3600000);
+      const m = Math.floor((msLeft % 3600000) / 60000);
+      const s = Math.floor((msLeft % 60000) / 1000);
+      lbTimer.textContent = `Leaderboard resets in ${h}h ${m}m ${s}s`;
+      setTimeout(updateLbTimer, 1000);
+    }
+
+    // Backsound auto play fix for mobile
+    document.body.addEventListener('touchstart', function playAudioOnce() {
+      bgmusic.play();
+      document.body.removeEventListener('touchstart', playAudioOnce);
+    });
+
+    // Init
+    loadLeaderboard();
+    resetGame();
     requestAnimationFrame(loop);
+
+    window.addEventListener("load", () => {
+      const loading = document.getElementById("loading");
+      loading.style.opacity = "0";
+      setTimeout(() => loading.style.display = "none", 500);
+    });
   </script>
 </body>
 </html>
