@@ -631,7 +631,7 @@
       const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours()+1, 0, 0, 0);
       const msLeft = nextHour - now;
       if (msLeft <= 0) {
-        loadLeaderboard(); // reload leaderboard saat jam berganti
+        loadLeaderboardFirebase(renderLeaderboard); // reload leaderboard dari Firebase
         lbTimer.textContent = "Leaderboard reset!";
         setTimeout(updateLbTimer, 1000);
         return;
@@ -646,6 +646,7 @@
     resetGame();
     requestAnimationFrame(loop);
     loadLeaderboardFirebase(renderLeaderboard);
+    updateLbTimer();
 
     // Backsound auto play fix for mobile
     document.body.addEventListener('touchstart', function playAudioOnce() {
