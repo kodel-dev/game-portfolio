@@ -85,7 +85,7 @@
       height: auto !important;
       aspect-ratio: 1/1 !important;
       max-width: 98vw !important;
-      max-height: 60vh !important; /* gunakan tinggi layar, bukan lebar! */
+      max-height: 60vh !important; /* gunakan tinggi layar! */
       border-radius: 0 !important;
       margin-bottom: 1.2rem;
       display: block;
@@ -151,7 +151,7 @@
         height: auto !important;
         aspect-ratio: 1/1 !important;
         max-width: 98vw !important;
-        max-height: 55vw !important;
+        max-height: 60vh !important; /* gunakan tinggi layar! */
         border-radius: 0 !important;
         margin-bottom: 1.2rem;
         display: block;
@@ -365,6 +365,8 @@
       canvas.width = size;
       canvas.height = size;
       grid = Math.floor(size / tileCount);
+      // Pastikan grid minimal 10 agar snake tidak terlalu kecil
+      if (grid < 10) grid = 10;
     }
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
@@ -475,11 +477,15 @@
       }
     }
 
+    function startGame() {
+      resetGame();
+      if (!gameOver) requestAnimationFrame(loop);
+    }
+
     // Keyboard controls
     document.addEventListener("keydown", e => {
       if (gameOver && (e.key === " " || e.key === "Enter")) {
-        resetGame();
-        requestAnimationFrame(loop);
+        startGame();
         return;
       }
       if ((e.key === "ArrowLeft" || e.key === "a" || e.key === "A") && dx !== 1) {
@@ -523,17 +529,11 @@
     }, { passive: false });
 
     // Restart button
-    restartBtn.addEventListener("click", () => {
-      resetGame();
-      requestAnimationFrame(loop);
-    });
+    restartBtn.addEventListener("click", startGame);
 
     // Tap canvas to restart on mobile
     canvas.addEventListener("click", () => {
-      if (gameOver) {
-        resetGame();
-        requestAnimationFrame(loop);
-      }
+      if (gameOver) startGame();
     });
 
     // Save best score in localStorage
