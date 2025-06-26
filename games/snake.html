@@ -152,13 +152,14 @@
     @media (max-width: 600px) {
       #score { font-size: 1em; }
       #game {
-        max-width: 98vw !important;
-        max-height: 60vh !important;
         width: 98vw !important;
         height: auto !important;
         aspect-ratio: 1/1 !important;
+        max-width: 98vw !important;
+        max-height: 98vw !important;
         border-radius: 0 !important;
         margin-bottom: 1.2rem;
+        display: block;
       }
       #restart, #to-index { font-size: 0.95em; }
       #leaderboard { font-size: 0.95em; }
@@ -355,9 +356,9 @@
     }
 
     function resizeCanvas() {
-      let w = window.innerWidth;
-      let h = window.innerHeight;
-      let size = Math.min(w * 0.98, h * 0.6, 420);
+      let w = window.innerWidth * 0.98;
+      let h = window.innerHeight * 0.98;
+      let size = Math.min(w, h, 420);
       canvas.width = size;
       canvas.height = size;
       grid = Math.floor(size / tileCount);
@@ -467,7 +468,7 @@
         gameOver = true;
         drawGameOver();
         restartBtn.style.display = "inline-block";
-        updateLeaderboard(score);
+        updateLeaderboardFirebase(score);
       }
     }
 
@@ -603,11 +604,12 @@
       renderLeaderboard();
       updateLbTimer();
     }
-    function renderLeaderboard() {
-      lbList.innerHTML = leaderboard.length
-        ? leaderboard.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
+    function renderLeaderboard(arr) {
+      lbList.innerHTML = arr.length
+        ? arr.map((s, i) => `<li>#${i + 1} : <b>${s.name}</b> — ${s.score}</li>`).join("")
         : "<li>No score yet</li>";
     }
+    loadLeaderboardFirebase(renderLeaderboard);
 
     // Timer realtime ke jam berikutnya
     function updateLbTimer() {
